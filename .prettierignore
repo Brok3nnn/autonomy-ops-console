@@ -1,0 +1,4 @@
+# Generated data (see scripts/fetch-routes.js) and lock files
+public/data/
+package-lock.json
+coverage/

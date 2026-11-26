@@ -1,0 +1,37 @@
+{
+  "name": "autonomy-ops-console",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Concept supervision console for automated-driving trials in Austria: a simulated fleet on real roads and a road-risk index from live public data.",
+  "license": "MIT",
+  "author": "Balint Vitan (https://github.com/Brok3nnn)",
+  "homepage": "https://autonomy-ops-console.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Brok3nnn/autonomy-ops-console.git"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "node --watch dev-server.js",
+    "start": "node dev-server.js",
+    "test": "node --test",
+    "test:coverage": "node --test --experimental-test-coverage",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm run lint && npm run format:check && npm test",
+    "routes:fetch": "node scripts/fetch-routes.js"
+  },
+  "dependencies": {
+    "express": "^5.3.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "eslint": "^9.39.5",
+    "globals": "^17.14.0",
+    "prettier": "^3.10.1"
+  }
+}

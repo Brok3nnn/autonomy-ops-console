@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Autonomy Ops · Supervision console</title>
+    <meta
+      name="description"
+      content="Concept supervision console for automated-driving trials in Austria: a simulated fleet on real roads with a road-risk index from public weather and news data."
+    />
+
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.bunny.net" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.bunny.net/css?family=manrope:400,500,600,700,800|ibm-plex-mono:400,500"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css"
+      integrity="sha384-MinO0mNliZ3vwppuPOUnGa+iq619pfMhLVUXfC4LHwSCvF9H+6P/KO4Q7qBOYV5V"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="noise" aria-hidden="true"></div>
+    <div id="appError" class="app-error" role="alert" hidden></div>
+
+    <div class="app-grid">
+      <aside class="rail rail-left">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <span></span>
+            <span></span>
+          </div>
+          <div>
+            <p class="label">Supervision console</p>
+            <h1>AUTONOMY OPS</h1>
+          </div>
+        </div>
+
+        <nav class="nav" aria-label="Primary">
+          <button type="button" class="nav-item is-active" data-nav="live">Live Operations</button>
+          <button type="button" class="nav-item" data-nav="approvals">Area Approval</button>
+          <button type="button" class="nav-item" data-nav="incidents">Incident Handling</button>
+          <button type="button" class="nav-item" data-nav="transmission">
+            Transmission Health
+          </button>
+        </nav>
+
+        <section class="rail-section live-ops-only">
+          <h2>Authority Scope</h2>
+          <ul class="line-list">
+            <li>Remote vehicle supervision</li>
+            <li>Dynamic area activation/deactivation</li>
+            <li>Authority-approved exception handling</li>
+            <li>Secure operator-entity communication</li>
+          </ul>
+        </section>
+
+        <section class="rail-section">
+          <h2>Emergency Vehicles</h2>
+          <ul id="emergencyList" class="line-list emergency-list"></ul>
+        </section>
+      </aside>
+
+      <main class="workspace">
+        <section class="map-stage">
+          <div class="hud-row hud-row-top">
+            <div class="hud-item">
+              <span>Nation</span>
+              <strong>Austria</strong>
+            </div>
+            <div class="hud-item">
+              <span>Supervised Vehicles</span>
+              <strong id="vehicleCount">0</strong>
+            </div>
+            <div class="hud-item">
+              <span>Emergency (Stopped)</span>
+              <strong id="criticalCount">0</strong>
+            </div>
+          </div>
+
+          <div id="map" aria-label="Austria operations map"></div>
+
+          <aside id="mapEmergencyCard" class="map-emergency-card" hidden>
+            <p class="label">Emergency Vehicle</p>
+            <h3 id="mapEmergencyTitle">--</h3>
+            <p id="mapEmergencyDescription" class="mono"></p>
+            <p id="mapEmergencyMeta" class="mono"></p>
+            <div class="map-emergency-actions">
+              <button type="button" class="emergency-action" data-emergency-action="call-112">
+                Call 112
+              </button>
+              <button
+                type="button"
+                class="emergency-action"
+                data-emergency-action="dispatch-roadside"
+              >
+                Dispatch Roadside
+              </button>
+              <button type="button" class="emergency-action" data-emergency-action="alert-fleet">
+                Alert Fleet Ops
+              </button>
+              <button
+                type="button"
+                class="emergency-action"
+                data-emergency-action="clear-emergency"
+              >
+                Resume Vehicle
+              </button>
+            </div>
+          </aside>
+
+          <aside id="approvalMapCard" class="map-approval-card" hidden>
+            <p class="label">Signal detail</p>
+            <h3 id="approvalMapTitle">No signal selected</h3>
+            <p id="approvalMapMeta" class="mono"></p>
+            <p id="approvalMapSignal" class="mono"></p>
+            <div class="map-approval-grid">
+              <div>
+                <span class="mono">Severity</span>
+                <strong id="approvalMapSeverity">--</strong>
+              </div>
+              <div>
+                <span class="mono">Type</span>
+                <strong id="approvalMapType">--</strong>
+              </div>
+              <div>
+                <span class="mono">Affected</span>
+                <strong id="approvalMapSpan">--</strong>
+              </div>
+              <div>
+                <span class="mono">Age</span>
+                <strong id="approvalMapAge">--</strong>
+              </div>
+            </div>
+            <p id="approvalMapAction" class="mono">Action: --</p>
+            <p id="approvalMapSource" class="mono">Source: --</p>
+          </aside>
+
+          <aside id="emergencyNotice" class="emergency-notice" hidden aria-live="assertive"></aside>
+        </section>
+
+        <section id="viewIncidents" class="standalone-stage" hidden>
+          <header class="section-head">
+            <p class="label">System Overrides</p>
+            <h2>Incident Resolution Center</h2>
+            <p class="mono">Manage critical fleet anomalies via direct command link.</p>
+          </header>
+
+          <div class="flight-strip-board">
+            <div class="flight-strip-header mono">
+              <span>Sys ID</span>
+              <span>Telemetry Decay</span>
+              <span>Diagnostic Waterfall</span>
+              <span>T-Minus / Lock</span>
+            </div>
+            <ul id="incidentList" class="flight-strip-list"></ul>
+          </div>
+        </section>
+
+        <section id="viewTransmission" class="standalone-stage" hidden>
+          <header class="section-head">
+            <p class="label">Infrastructure Telemetry</p>
+            <h2>Transmission Node Control</h2>
+            <p class="mono">Monitoring 5G/V2X relay towers and regional data centers.</p>
+          </header>
+
+          <div class="node-control-layout">
+            <div id="txNodeGrid" class="node-grid"></div>
+            <div id="txNodeInspector" class="node-inspector"></div>
+          </div>
+        </section>
+      </main>
+
+      <aside class="rail rail-right">
+        <section id="approvalSidebar" class="rail-section approval-sidebar" hidden>
+          <section class="approval-control-panel">
+            <div class="approval-panel-head">
+              <div>
+                <p class="label">Area Approval</p>
+                <h4 id="approvalSegmentName"></h4>
+              </div>
+              <div id="approvalSegmentBadge" class="approval-state-badge" hidden></div>
+            </div>
+
+            <p id="approvalSegmentMeta" class="mono approval-segment-meta"></p>
+
+            <div id="approvalEmptyState" class="approval-empty-state" hidden></div>
+
+            <div id="approvalSegmentPanel" class="approval-segment-panel" hidden>
+              <div class="approval-action-grid approval-action-grid-inline">
+                <button type="button" class="approval-action-button" data-segment-action="allow">
+                  Allow road
+                </button>
+                <button
+                  type="button"
+                  class="approval-action-button is-critical"
+                  data-segment-action="block"
+                >
+                  Block road
+                </button>
+              </div>
+
+              <div class="approval-detail-block">
+                <span class="mono">Road details</span>
+                <p id="approvalSegmentWhy" class="approval-detail-copy"></p>
+              </div>
+
+              <div id="approvalSignalsBlock" class="approval-detail-block">
+                <span class="mono">Dangerous road parts</span>
+                <div id="approvalSignalList" class="approval-chip-list"></div>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <section class="rail-section live-ops-only">
+          <h2>Selected Vehicle</h2>
+          <p id="vehicleInspectorEmpty" class="inspector-empty">
+            Click a vehicle dot to view full telemetry.
+          </p>
+          <ul id="vehicleInspector" class="line-list inspector-list" hidden></ul>
+        </section>
+
+        <section class="rail-section live-ops-only">
+          <h2>Road Danger Intelligence</h2>
+          <ul id="dangerIndexes" class="line-list danger-list"></ul>
+          <svg
+            id="dangerChart"
+            class="danger-chart"
+            viewBox="0 0 320 170"
+            preserveAspectRatio="none"
+            role="img"
+            aria-label="Road danger gauge"
+          ></svg>
+          <p class="mono">
+            Inputs: Open-Meteo weather and GDELT news, refreshed every few minutes.
+          </p>
+        </section>
+
+        <section class="rail-section live-ops-only">
+          <h2>Control KPIs</h2>
+          <ul id="kpis" class="line-list"></ul>
+        </section>
+      </aside>
+    </div>
+
+    <script
+      src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"
+      integrity="sha384-SYKAG6cglRMN0RVvhNeBY0r3FYKNOJtznwA0v7B5Vp9tr31xAHsZC0DqkQ/pZDmj"
+      crossorigin="anonymous"
+    ></script>
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>

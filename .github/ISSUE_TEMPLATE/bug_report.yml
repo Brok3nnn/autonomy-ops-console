@@ -1,0 +1,42 @@
+name: Bug report
+description: Something does not work as described in the README.
+labels: [bug]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you see, and what did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open Area Approval
+        2. Click a road segment
+        3. ...
+    validations:
+      required: true
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where did it happen?
+      options:
+        - Live demo
+        - Local dev server (npm run dev)
+        - Tests or tooling
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Browser, OS and Node.js version
+      placeholder: Chrome 131 on macOS 15, Node.js 24
+  - type: textarea
+    id: logs
+    attributes:
+      label: Console output or logs
+      description: Browser console errors or server output, if any.
+      render: text
