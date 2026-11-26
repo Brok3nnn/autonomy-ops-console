@@ -2,3 +2,6 @@
 public/data/
 package-lock.json
 coverage/
+
+# Third-party text kept verbatim
+CODE_OF_CONDUCT.md
