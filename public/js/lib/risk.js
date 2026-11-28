@@ -50,9 +50,13 @@ export function computeOverallRisk(scores, weights = RISK_WEIGHTS) {
   return weightTotal > 0 ? Math.round(weightedSum / weightTotal) : null;
 }
 
+/** Lowest scores of the "Watch closely" and "Emergency profile" bands. The gauge uses them too. */
+export const RISK_BANDS = { watch: 45, emergency: 75 };
+
 export function riskLevel(score) {
-  if (score >= 75) return { className: "status-hold", label: "Emergency profile" };
-  if (score >= 45) return { className: "status-conditional", label: "Watch closely" };
+  const { watch, emergency } = RISK_BANDS;
+  if (score >= emergency) return { className: "status-hold", label: "Emergency profile" };
+  if (score >= watch) return { className: "status-conditional", label: "Watch closely" };
   return { className: "status-approved", label: "Stable" };
 }
 

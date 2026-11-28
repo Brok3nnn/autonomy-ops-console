@@ -4,11 +4,19 @@ A browser-based supervision console for automated-driving trials in Austria: a s
 
 [![CI](https://github.com/Brok3nnn/autonomy-ops-console/actions/workflows/ci.yml/badge.svg)](https://github.com/Brok3nnn/autonomy-ops-console/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Node.js >= 20](https://img.shields.io/badge/node-%3E%3D20-339933.svg)](package.json)
+[![Node.js >= 22](https://img.shields.io/badge/node-%3E%3D22-339933.svg)](package.json)
 
 **Live demo:** https://autonomy-ops-console.vercel.app
 
-![The Live Operations view: 100 simulated vehicles on Austrian motorways, the emergency list on the left and the road danger panel on the right](docs/screenshot.png)
+**Quick start** (Node.js 22 or newer, no API keys):
+
+```bash
+git clone https://github.com/Brok3nnn/autonomy-ops-console.git && cd autonomy-ops-console
+npm ci
+npm run dev   # then open http://localhost:3000
+```
+
+![The Live Operations view: 100 simulated vehicles on Austrian motorways, the emergency list on the left and the road danger panel on the right](docs/screenshot.jpg)
 
 ## Overview
 
@@ -19,7 +27,7 @@ Features:
 - **Live Operations.** 100 simulated vehicles drive along 17 road corridors on real Austrian roads (MapLibre GL map with OpenFreeMap tiles). Each vehicle is Good, Warning or Emergency. A vehicle that enters Emergency stops and stays stopped until an operator resumes it from the emergency card; the card also logs 112 calls, roadside dispatch and fleet alerts.
 - **Road danger index.** A gauge and three inputs (weather severity, news pulse, road incident load) from Open-Meteo and GDELT. Every input shows its provider status (live, cached or unavailable, with times) instead of a silent fallback number.
 - **Area Approval.** Road segments coloured by operator decision and risk, with simulated hazard spans. Operators can block a segment; vehicles on it are rerouted over the remaining network.
-- **Incident Handling.** One strip per vehicle with an expandable incident console.
+- **Incident Handling.** One strip per vehicle in Emergency or Good state, Emergency first, with an expandable incident console.
 - **Transmission Health.** Simulated relay nodes with link telemetry, the units nearest to each node, and remote actions (power cycle, cache purge, traffic reroute).
 
 ## Architecture
@@ -134,12 +142,12 @@ Example payload:
 
 - HTML, CSS and JavaScript (ES modules), no framework, no bundler
 - [MapLibre GL JS](https://maplibre.org/) 4.7.1 with [OpenFreeMap](https://openfreemap.org/) tiles
-- Node.js (>= 20): Vercel serverless functions, [Express](https://expressjs.com/) 5 for local runs
-- `node:test` for tests, ESLint 9 (flat config) and Prettier 3, GitHub Actions on Node 24
+- Node.js (>= 22): Vercel serverless functions, [Express](https://expressjs.com/) 5 for local runs
+- `node:test` for tests, ESLint 10 (flat config) and Prettier 3, GitHub Actions on Node 22 and 24
 
 ## Getting started
 
-Requirements: Node.js 20 or newer and npm. No API keys are needed.
+Requirements: Node.js 22 or newer and npm. No API keys are needed.
 
 ```bash
 git clone https://github.com/Brok3nnn/autonomy-ops-console.git
@@ -174,7 +182,7 @@ npm run routes:fetch -- c12 c14 # selected corridors
 ## Testing and quality checks
 
 ```bash
-npm test               # node:test, 55 tests, no network access
+npm test               # node:test, 56 tests, no network access
 npm run test:coverage  # the same with coverage (about 95 % of lines in the tested modules)
 npm run lint           # ESLint
 npm run format:check   # Prettier
@@ -183,7 +191,7 @@ npm run check          # all of the above, as in CI
 
 The tests cover the risk maths, the weather-code mapping, GDELT parsing, caching and backoff with a fake fetch and a fake clock, the HTTP handlers and dev server routing, and the DOM-free client logic (geometry, corridor network, detours, vehicle state machine, risk panel model, signal generation). The view and map modules that touch the DOM are not unit-tested; they were checked manually in Chrome.
 
-CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs `npm run check` on Node 24 for every push and pull request to `main`.
+CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs `npm run check` on Node 22 and 24 for every push and pull request to `main`.
 
 ## Project structure
 
@@ -227,7 +235,7 @@ Planned, not implemented:
 
 - **Map tiles and style:** [OpenFreeMap](https://openfreemap.org/) (Liberty style), [OpenMapTiles](https://openmaptiles.org/) schema, map data © [OpenStreetMap contributors](https://www.openstreetmap.org/copyright). The attribution is shown on the map.
 - **Routes:** © OpenStreetMap contributors ([ODbL](https://opendatacommons.org/licenses/odbl/)), computed with the public OSRM servers [routing.openstreetmap.de](https://routing.openstreetmap.de/) (operated by FOSSGIS) and router.project-osrm.org (OSRM demo server sponsored by FOSSGIS). Their usage policies allow at most one request per second and no heavy use; the route cache exists so that the app never calls them at runtime. The current cache was generated from routing.openstreetmap.de on 2026-11-26.
-- **Austria boundary:** [geoBoundaries](https://www.geoboundaries.org/) (ADM0, shapeID `79767133B81848071098912`, according to the properties in `public/data/austria-boundary.json`). The file carries no licence metadata, so the licence is **unverified**; check the geoBoundaries record before reusing the file.
+- **Austria boundary:** [geoBoundaries](https://www.geoboundaries.org/) gbOpen AUT ADM0 (`AUT-ADM0-79767133`), derived from data of the Austrian Federal Office of Metrology and Surveying (BEV). geoBoundaries lists it under [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/). The file here is a simplified version, so it stays under CC BY-SA 2.0. The attribution is shown on the map.
 - **Weather:** [Open-Meteo](https://open-meteo.com/) (CC BY 4.0).
 - **News:** [The GDELT Project](https://www.gdeltproject.org/) (DOC 2.0 API).
 - **Fonts:** Manrope and IBM Plex Mono, served via [Bunny Fonts](https://fonts.bunny.net/) (bunny.net).
@@ -235,7 +243,7 @@ Planned, not implemented:
 
 ## License
 
-[MIT](LICENSE) © 2026 Balint Vitan
+The code is [MIT](LICENSE) © 2026 Balint Vitan. The data files in `public/data/` keep their own licences: the route cache is © OpenStreetMap contributors under the [ODbL](https://opendatacommons.org/licenses/odbl/), and the Austria boundary is under [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/). See [Data sources and attribution](#data-sources-and-attribution).
 
 ## About
 

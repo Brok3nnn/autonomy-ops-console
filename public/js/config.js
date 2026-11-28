@@ -155,12 +155,14 @@ export const AUTHORITY_SIGNAL_TYPES = {
 /**
  * Infrastructure nodes on the Transmission Health view. The uplink addresses
  * come from the documentation ranges of RFC 5737; they are illustrative.
+ * Node ids must not look like zone codes (A-01 to A-04): Area Approval turns
+ * feed messages that mention a zone code into road signals.
  */
 export const TX_NODES = [
-  { id: "A-02", name: "SALZBURG DATACENTER", city: "salzburg", uplink: "192.0.2.10" },
-  { id: "A-04", name: "VIENNA MAIN NODE", city: "vienna", uplink: "192.0.2.14" },
-  { id: "A-10", name: "INNSBRUCK CORE", city: "innsbruck", uplink: "198.51.100.84" },
-  { id: "A-12", name: "GRAZ TELEMETRY", city: "graz", uplink: "198.51.100.112" },
+  { id: "TX-1", name: "SALZBURG DATACENTER", city: "salzburg", uplink: "192.0.2.10" },
+  { id: "TX-2", name: "VIENNA MAIN NODE", city: "vienna", uplink: "192.0.2.14" },
+  { id: "TX-3", name: "INNSBRUCK CORE", city: "innsbruck", uplink: "198.51.100.84" },
+  { id: "TX-4", name: "GRAZ TELEMETRY", city: "graz", uplink: "198.51.100.112" },
 ];
 
 export const TIMING = {

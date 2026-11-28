@@ -60,7 +60,7 @@ const SIGNAL_SCENARIOS = {
       summary:
         "Fog, spray, or glare has reduced forward visibility through this section and is compressing lane throughput.",
       recommendedAction: "Reduce speed window",
-      sourceLabel: "Open-Meteo",
+      sourceLabel: "Weather Exposure Model",
     },
     {
       titleSuffix: "surface instability",
@@ -81,7 +81,7 @@ const SIGNAL_SCENARIOS = {
       summary:
         "Localized crosswind or weather exposure is reducing lane stability for vehicles passing this stretch.",
       recommendedAction: "Reduce speed window",
-      sourceLabel: "Open-Meteo",
+      sourceLabel: "Weather Exposure Model",
     },
   ],
   accident: [

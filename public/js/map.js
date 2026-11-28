@@ -18,6 +18,10 @@ const ROUTE_SOURCE_ID = "selected-route-source";
 const ROUTE_GLOW_LAYER_ID = "selected-route-glow";
 const ROUTE_LINE_LAYER_ID = "selected-route-line";
 
+/** Credit for the Austria outline, listed in the map's attribution control. */
+const BOUNDARY_ATTRIBUTION =
+  'Boundary: <a href="https://www.geoboundaries.org/" target="_blank" rel="noopener">geoBoundaries</a> / BEV (<a href="https://creativecommons.org/licenses/by-sa/2.0/" target="_blank" rel="noopener">CC BY-SA 2.0</a>)';
+
 const [[SOUTH, WEST], [NORTH, EAST]] = AUSTRIA_VIEW_BOUNDS;
 const AUSTRIA_CENTER_LNGLAT = [(WEST + EAST) / 2, (SOUTH + NORTH) / 2];
 
@@ -159,7 +163,11 @@ export function showBoundary(geojson) {
   onMapReady(() => {
     const { map } = state;
     removeLayers([BOUNDARY_LINE_LAYER_ID, BOUNDARY_GLOW_LAYER_ID], BOUNDARY_SOURCE_ID);
-    map.addSource(BOUNDARY_SOURCE_ID, { type: "geojson", data: geojson });
+    map.addSource(BOUNDARY_SOURCE_ID, {
+      type: "geojson",
+      data: geojson,
+      attribution: BOUNDARY_ATTRIBUTION,
+    });
     map.addLayer({
       id: BOUNDARY_GLOW_LAYER_ID,
       type: "line",

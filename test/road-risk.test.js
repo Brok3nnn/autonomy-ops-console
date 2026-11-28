@@ -274,7 +274,11 @@ describe("createRoadRiskFeed", () => {
     assert.deepEqual(upstream.calls, { weather: 1, news: 1 });
   });
 
-  it("answers within the timeout when an upstream hangs", async () => {
+  it("answers within the timeout when an upstream hangs", async (t) => {
+    // AbortSignal.timeout() does not keep the event loop alive; without this
+    // timer Node 22 cancels the test before the signal fires.
+    const keepAlive = setTimeout(() => {}, 5000);
+    t.after(() => clearTimeout(keepAlive));
     const hang = (_url, { signal }) =>
       new Promise((_resolve, reject) =>
         signal.addEventListener("abort", () => reject(signal.reason)),

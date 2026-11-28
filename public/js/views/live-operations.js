@@ -5,7 +5,13 @@ import { el } from "../dom.js";
 import { controlStateLabel, getControlState } from "../lib/authority.js";
 import { escapeHtml, formatCorridorLabel, formatLatLng } from "../lib/format.js";
 import { getPointAtDistance } from "../lib/geo.js";
-import { buildRiskPanelModel, gaugeArcPath, gaugePoint, scoreToGaugeAngle } from "../lib/risk.js";
+import {
+  RISK_BANDS,
+  buildRiskPanelModel,
+  gaugeArcPath,
+  gaugePoint,
+  scoreToGaugeAngle,
+} from "../lib/risk.js";
 import { averageIntegrity } from "../lib/telemetry.js";
 import {
   computeProgress,
@@ -182,9 +188,9 @@ function renderGauge({ score, level, note }) {
   el.dangerChart.innerHTML = `
     <title>Overall danger index: ${score === null ? "no reading" : `${score} of 100`}. ${escapeHtml(note)}.</title>
     <path class="danger-gauge-base" d="${gaugeArcPath(cx, cy, outerRadius, 180, 360)}"></path>
-    <path class="danger-gauge-segment gauge-green" d="${arc(0, 33)}"></path>
-    <path class="danger-gauge-segment gauge-yellow" d="${arc(33, 66)}"></path>
-    <path class="danger-gauge-segment gauge-red" d="${arc(66, 100)}"></path>
+    <path class="danger-gauge-segment gauge-green" d="${arc(0, RISK_BANDS.watch)}"></path>
+    <path class="danger-gauge-segment gauge-yellow" d="${arc(RISK_BANDS.watch, RISK_BANDS.emergency)}"></path>
+    <path class="danger-gauge-segment gauge-red" d="${arc(RISK_BANDS.emergency, 100)}"></path>
     ${needle}
     <circle class="danger-pivot" cx="${cx}" cy="${cy}" r="5"></circle>
     <text class="danger-axis-label" x="34" y="${cy + 4}">0</text>

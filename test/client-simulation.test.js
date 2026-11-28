@@ -1,10 +1,11 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
-import { CORRIDOR_BLUEPRINTS } from "../public/js/config.js";
+import { CORRIDOR_BLUEPRINTS, TX_NODES } from "../public/js/config.js";
 import {
   CONTROL_STATE_CLOSED,
   buildAuthoritySnapshot,
+  buildFeedSignals,
   dedupeSignals,
   hashString,
   signalWindow,
@@ -269,6 +270,19 @@ describe("authority signals", () => {
     assert.ok(snapshot.mapSignals.every((signal) => signal.corridorId !== blocked.id));
     assert.equal(Object.keys(cache.cores).length, corridors.length);
   });
+
+  it("does not turn transmission node events into road signals", () => {
+    const corridors = Object.values(
+      buildCorridorNetwork({ blueprints: CORRIDOR_BLUEPRINTS, routeCache, boundary }),
+    );
+    const feed = TX_NODES.map((node) => ({
+      text: `[NODE ${node.id}] Initiating remote power cycle...`,
+      severity: "warn",
+    }));
+    for (const corridor of corridors) {
+      assert.deepEqual(buildFeedSignals(corridor, [], feed, 0), [], corridor.id);
+    }
+  });
 });
 
 describe("formatting and telemetry helpers", () => {
@@ -283,10 +297,10 @@ describe("formatting and telemetry helpers", () => {
 
   it("assigns units to the nearest node and keeps sparklines in range", () => {
     const nodes = [
-      { id: "A-04", city: "vienna" },
-      { id: "A-12", city: "graz" },
+      { id: "TX-2", city: "vienna" },
+      { id: "TX-4", city: "graz" },
     ];
-    assert.equal(nearestNodeId([48.1, 16.2], nodes), "A-04");
+    assert.equal(nearestNodeId([48.1, 16.2], nodes), "TX-2");
     const next = nextSparkline([10, 95], sequence(1));
     assert.deepEqual(next, [95, 95]);
     assert.equal(sparklinePath([0, 100], 400, 40), "M 0,40 L 400,0");

@@ -168,7 +168,7 @@ function renderMapCard(snapshot) {
   );
   el.approvalMapAge.textContent = `${signal.minutesAgo} min`;
   el.approvalMapAction.textContent = `Action: ${signal.recommendedAction}`;
-  el.approvalMapSource.textContent = `Source: ${signal.sourceLabel}`;
+  el.approvalMapSource.textContent = `Source: ${signal.sourceLabel} (simulated)`;
   el.approvalMapCard.hidden = false;
 }
 

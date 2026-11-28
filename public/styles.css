@@ -104,6 +104,10 @@ body {
   inset: 14px;
 }
 
+.brand .brand-note {
+  margin-top: 0.25rem;
+}
+
 .label {
   margin: 0;
   font-size: 0.68rem;
@@ -148,6 +152,11 @@ h1 {
   letter-spacing: 0.13em;
   text-transform: uppercase;
   color: var(--muted);
+}
+
+.rail-section a {
+  color: var(--ink);
+  text-underline-offset: 2px;
 }
 
 .approval-sidebar {

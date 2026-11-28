@@ -4,7 +4,7 @@ Thanks for your interest. This is a small portfolio project, so issues and focus
 
 ## Setup
 
-You need Node.js 20 or newer (CI uses Node 24) and npm.
+You need Node.js 22 or newer (CI runs Node 22 and 24) and npm.
 
 ```bash
 npm ci

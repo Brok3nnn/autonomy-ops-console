@@ -73,7 +73,7 @@ function renderNodeCard(config, node, unitCount) {
       </div>
       <div class="node-status">${escapeHtml(node.mode.toUpperCase())}</div>
       <div class="node-stats">
-        <div class="n-stat"><span>Bandwidth</span><strong>${nodeBandwidthGbps(node.integrity).toFixed(2)} GB/s</strong></div>
+        <div class="n-stat"><span>Bandwidth</span><strong>${nodeBandwidthGbps(node.integrity).toFixed(2)} Gbit/s</strong></div>
         <div class="n-stat"><span>Handshakes</span><strong>${unitCount} active</strong></div>
       </div>
     </div>`;
@@ -204,10 +204,7 @@ function handleNodeAction(action, config, onChange) {
       () => {
         node.integrity = 100;
         node.mode = "Online";
-        pushEvent(
-          `${tag} Traffic successfully rerouted from ${config.name} to secondary uplink.`,
-          "info",
-        );
+        pushEvent(`${tag} Traffic rerouted to the secondary uplink.`, "info");
       },
       onChange,
     );
