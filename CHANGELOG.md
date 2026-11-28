@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - The road danger panel links to Open-Meteo and gives the refresh interval.
 - Transmission bandwidth is shown in Gbit/s.
 - ESLint 10 replaces ESLint 9, which is no longer supported.
+- The left sidebar lists what the console itself does (Console Tools) instead of an Authority Scope list.
 
 ## [1.0.0] - 2026-11-26
 
